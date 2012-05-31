@@ -1,0 +1,12 @@
+Header header
+int32 width
+int32 height
+float32[] x
+float32[] y
+float32[] z
+float32[] disparity
+uint8[] r
+uint8[] g
+uint8[] b
+sensor_msgs/CameraInfo left
+sensor_msgs/CameraInfo right

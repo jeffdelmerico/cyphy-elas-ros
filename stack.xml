@@ -1,0 +1,18 @@
+<stack>
+  <description brief="libelas_ros">ROS wrapper functionality for libelas, including point cloud construction algorithm.
+    Developed and maintained by the Cyphy Lab at the Queensland University of Technology, Brisbane, Australia.
+    https://wiki.qut.edu.au/display/cyphy/Robotics,+Vision+and+Sensor+Networking+at+QUT</description>
+  <author>Maintained by Patrick Ross/patrick.ross@connect.qut.edu.au</author>
+  <license>GPL</license>  
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/libelas_ros</url>
+
+  <depend stack="common_msgs" /> <!-- nav_msgs, sensor_msgs, geometry_msgs -->
+  <depend stack="geometry" /> <!-- tf -->
+  <depend stack="image_common" /> <!-- image_transport -->
+  <depend stack="perception_pcl" /> <!-- pcl_ros, pcl -->
+  <depend stack="ros" />
+  <depend stack="ros_comm" /> <!-- roscpp, message_filters -->
+  <depend stack="vision_opencv" /> <!-- image_geometry, cv_bridge -->
+
+</stack>
