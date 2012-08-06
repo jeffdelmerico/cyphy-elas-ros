@@ -4,7 +4,7 @@
   <author>Maintained by Patrick Ross/patrick.ross@connect.qut.edu.au</author>
   <license>GPL</license>  
   <review status="unreviewed" notes=""/>
-  <url>http://ros.org/wiki/cyphy-ros-pkg</url>
+  <url>http://ros.org/wiki/cyphy_elas_ros</url>
 
   <depend stack="common_msgs" /> <!-- nav_msgs, sensor_msgs, geometry_msgs -->
   <depend stack="geometry" /> <!-- tf -->
