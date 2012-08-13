@@ -4,9 +4,6 @@
     This is a ROS-Package for libelas, a library for visual odometry created by Andeas Geiger
     from the Institute of Measurement and Control Systems at Karlsruhe Institute of Technology.
 
-    Apart from the original libelas sources, this package contains
-    a CMakeFile for easier integration into the ROS build system.
-
     Please note that this code is licensed under GPL. For a commercial usage, please
     contact Andreas Geiger directly (see
     <a href="http://www.cvlibs.net/software/libelas.html">http://www.cvlibs.net/software/libelas.html</a>).
