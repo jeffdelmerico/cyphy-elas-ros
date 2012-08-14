@@ -2,7 +2,7 @@
   <description brief="ROS-Wrapper for libelas">
     This is the ROS wrapper for libelas, library for Efficient LArge Scale stereo matching (see package elas).
   </description>
-  <author>Patrick Ross</author>
+  <author>Patrick Ross/patrick.ross@connect.qut.edu.au</author>
   <license>GPL</license>
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/elas_ros</url>
