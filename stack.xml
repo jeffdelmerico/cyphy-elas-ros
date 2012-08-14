@@ -1,7 +1,9 @@
 <stack>
-  <description brief="libelas_ros">ROS wrapper functionality for libelas, including point cloud construction algorithm.
+  <description brief="libelas_ros">
+    <p>ROS wrapper functionality for libelas, including point cloud construction algorithm.</p>
+    <p>Please note that this code is licensed under GPL. For a commercial usage, please contact Andreas Geiger directly (see <a href="http://www.cvlibs.net/software/libelas.html">http://www.cvlibs.net/software/libelas.html</a>).</p>
   </description>
-  <author>Maintained by Patrick Ross/patrick.ross@connect.qut.edu.au</author>
+  <author>Patrick Ross/patrick.ross@connect.qut.edu.au</author>
   <license>GPL</license>  
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/cyphy_elas_ros</url>
