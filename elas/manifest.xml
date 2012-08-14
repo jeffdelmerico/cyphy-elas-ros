@@ -1,13 +1,7 @@
 <package>
   <description brief="ROS-Package for libelas, library for Efficient LArge Scale stereo matching">
-
-    This is a ROS-Package for libelas, a library for visual odometry created by Andeas Geiger
-    from the Institute of Measurement and Control Systems at Karlsruhe Institute of Technology.
-
-    Please note that this code is licensed under GPL. For a commercial usage, please
-    contact Andreas Geiger directly (see
-    <a href="http://www.cvlibs.net/software/libelas.html">http://www.cvlibs.net/software/libelas.html</a>).
-
+    <p>This is a ROS-Package for libelas, a library for visual odometry created by Andeas Geiger from the Institute of Measurement and Control Systems at Karlsruhe Institute of Technology.</p>
+    <p>Please note that this code is licensed under GPL. For a commercial usage of libelas, please contact Andreas Geiger directly (see <a href="http://www.cvlibs.net/software/libelas.html">http://www.cvlibs.net/software/libelas.html</a>).</p>
   </description>
   <author>Andreas Geiger/geiger@kit.edu, maintained by: Patrick Ross/patrick.ross@connect.qut.edu.au</author>
   <license>GPL</license>
