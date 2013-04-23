@@ -26,6 +26,7 @@
 #include <sensor_msgs/Image.h>
 #include <sensor_msgs/CameraInfo.h>
 #include <sensor_msgs/image_encodings.h>
+#include <stereo_msgs/DisparityImage.h>
 
 #include <message_filters/subscriber.h>
 #include <message_filters/synchronizer.h>
@@ -45,7 +46,7 @@
 
 #include <elas.h>
 
-#define DOWN_SAMPLE
+//#define DOWN_SAMPLE
 
 class Elas_Proc
 {
@@ -70,8 +71,11 @@ public:
 
     image_transport::ImageTransport local_it(local_nh);
     disp_pub_.reset(new Publisher(local_it.advertise("disparity", 1)));
+    depth_pub_.reset(new Publisher(local_it.advertise("depth", 1)));
     pc_pub_.reset(new ros::Publisher(local_nh.advertise<PointCloud>("point_cloud", 1)));
     elas_fd_pub_.reset(new ros::Publisher(local_nh.advertise<elas_ros::ElasFrameData>("frame_data", 1)));
+
+    pub_disparity_ = local_nh.advertise<stereo_msgs::DisparityImage>("disparity_raw", 1);
 
     // Synchronize input topics. Optionally do approximate synchronization.
     bool approx;
@@ -90,14 +94,42 @@ public:
     }
 
     // Create the elas processing class
-    Elas::parameters param(Elas::MIDDLEBURY);
-    param.match_texture = 1;
-    param.postprocess_only_left = 1;
-    param.ipol_gap_width = 2;
+    //param.reset(new Elas::parameters(Elas::MIDDLEBURY));
+    //param.reset(new Elas::parameters(Elas::ROBOTICS));
+    param.reset(new Elas::parameters);
+
+    /* Parameters tunned*/
+    param->disp_min              = 0;
+    param->disp_max              = 255;
+    param->support_threshold     = 0.95;
+    param->support_texture       = 10;
+    param->candidate_stepsize    = 5;
+    param->incon_window_size     = 5;
+    param->incon_threshold       = 5;
+    param->incon_min_support     = 5;
+    param->add_corners           = 0;
+    param->grid_size             = 20;
+    param->beta                  = 0.02;
+    param->gamma                 = 3;
+    param->sigma                 = 1;
+    param->sradius               = 2;
+    param->match_texture         = 1;
+    param->lr_threshold          = 2;
+    param->speckle_sim_threshold = 1;
+    param->speckle_size          = 200;
+    param->ipol_gap_width        = 300;
+    param->filter_median         = 0;
+    param->filter_adaptive_mean  = 1;
+    param->postprocess_only_left = 1;
+    param->subsampling           = 0;
+
+    //param->match_texture = 1;
+    //param->postprocess_only_left = 1;
+    //param->ipol_gap_width = 2;
 #ifdef DOWN_SAMPLE
-    param.subsampling = true;
+    param->subsampling = true;
 #endif
-    elas_.reset(new Elas(param));
+    elas_.reset(new Elas(*param));
   }
 
   typedef image_transport::SubscriberFilter Subscriber;
@@ -109,7 +141,7 @@ public:
   typedef message_filters::Synchronizer<ApproximatePolicy> ApproximateSync;
   typedef pcl::PointCloud<pcl::PointXYZRGB> PointCloud;
 
-  void publish_point_cloud(const sensor_msgs::ImageConstPtr& l_image_msg, float* l_disp_data, const std::vector<int32_t>& inliers, 
+  void publish_point_cloud(const sensor_msgs::ImageConstPtr& l_image_msg, float* l_disp_data, const std::vector<int32_t>& inliers,
                            int32_t l_width, int32_t l_height,
                            const sensor_msgs::CameraInfoConstPtr& l_info_msg, const sensor_msgs::CameraInfoConstPtr& r_info_msg)
   {
@@ -196,6 +228,28 @@ public:
   void process(const sensor_msgs::ImageConstPtr& l_image_msg, const sensor_msgs::ImageConstPtr& r_image_msg,
                const sensor_msgs::CameraInfoConstPtr& l_info_msg, const sensor_msgs::CameraInfoConstPtr& r_info_msg)
   {
+    // Update the camera model
+    model_.fromCameraInfo(l_info_msg, r_info_msg);
+
+    // Allocate new disparity image message
+    stereo_msgs::DisparityImagePtr disp_msg =
+      boost::make_shared<stereo_msgs::DisparityImage>();
+    disp_msg->header         = l_info_msg->header;
+    disp_msg->image.header   = l_info_msg->header;
+    disp_msg->image.height   = l_image_msg->height;
+    disp_msg->image.width    = l_image_msg->width;
+    disp_msg->image.encoding = sensor_msgs::image_encodings::TYPE_32FC1;
+    disp_msg->image.step     = disp_msg->image.width * sizeof(float);
+    disp_msg->image.data.resize(disp_msg->image.height * disp_msg->image.step);
+    disp_msg->min_disparity = param->disp_min;
+    disp_msg->max_disparity = param->disp_max;
+
+    // Stereo parameters
+    float f = model_.right().fx();
+    float T = model_.baseline();
+    float depth_fact = T*f*1000.0f;
+    uint16_t bad_point = std::numeric_limits<uint16_t>::max();
+
     // Have a synchronised pair of images, now to process using elas
     // convert images if necessary
     uint8_t *l_image_data, *r_image_data;
@@ -238,7 +292,8 @@ public:
 
     // Allocate
     const int32_t dims[3] = {l_image_msg->width,l_image_msg->height,l_step};
-    float* l_disp_data = new float[width*height*sizeof(float)];
+    //float* l_disp_data = new float[width*height*sizeof(float)];
+    float* l_disp_data = reinterpret_cast<float*>(&disp_msg->image.data[0]);
     float* r_disp_data = new float[width*height*sizeof(float)];
 
     // Process
@@ -252,6 +307,12 @@ public:
       if (r_disp_data[i]>disp_max) disp_max = r_disp_data[i];
     }
 
+    cv_bridge::CvImage out_depth_msg;
+    out_depth_msg.header = l_image_msg->header;
+    out_depth_msg.encoding = sensor_msgs::image_encodings::MONO16;
+    out_depth_msg.image = cv::Mat(height, width, CV_16UC1);
+    uint16_t * out_depth_msg_image_data = reinterpret_cast<uint16_t*>(&out_depth_msg.image.data[0]);
+
     cv_bridge::CvImage out_msg;
     out_msg.header = l_image_msg->header;
     out_msg.encoding = sensor_msgs::image_encodings::MONO8;
@@ -260,15 +321,26 @@ public:
     for (int32_t i=0; i<width*height; i++)
     {
       out_msg.image.data[i] = (uint8_t)std::max(255.0*l_disp_data[i]/disp_max,0.0);
+      //disp_msg->image.data[i] = l_disp_data[i];
+      //disp_msg->image.data[i] = out_msg.image.data[i]
+
+      float disp =  l_disp_data[i];
+      // In milimeters
+      //out_depth_msg_image_data[i] = disp;
+      out_depth_msg_image_data[i] = disp <= 0.0f ? bad_point : (uint16_t)(depth_fact/disp);
+
       if (l_disp_data[i] > 0) inliers.push_back(i);
     }
 
     // Publish
     disp_pub_->publish(out_msg.toImageMsg());
+    depth_pub_->publish(out_depth_msg.toImageMsg());
     publish_point_cloud(l_image_msg, l_disp_data, inliers, width, height, l_info_msg, r_info_msg);
 
+    pub_disparity_.publish(disp_msg);
+
     // Cleanup data
-    delete l_disp_data;
+    //delete l_disp_data;
     delete r_disp_data;
   }
 
@@ -278,12 +350,18 @@ private:
   Subscriber left_sub_, right_sub_;
   InfoSubscriber left_info_sub_, right_info_sub_;
   boost::shared_ptr<Publisher> disp_pub_;
+  boost::shared_ptr<Publisher> depth_pub_;
   boost::shared_ptr<ros::Publisher> pc_pub_;
   boost::shared_ptr<ros::Publisher> elas_fd_pub_;
   boost::shared_ptr<ExactSync> exact_sync_;
   boost::shared_ptr<ApproximateSync> approximate_sync_;
   boost::shared_ptr<Elas> elas_;
   int queue_size_;
+
+  image_geometry::StereoCameraModel model_;
+  ros::Publisher pub_disparity_;
+  boost::scoped_ptr<Elas::parameters> param;
+
 };
 
 int main(int argc, char** argv)
