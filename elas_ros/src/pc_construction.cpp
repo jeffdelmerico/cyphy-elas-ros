@@ -29,6 +29,7 @@
 
 #include <pcl_ros/point_cloud.h>
 #include <pcl/point_types.h>
+#include <pcl_conversions/pcl_conversions.h>
 
 #include <elas_ros/ElasFrameData.h>
 
@@ -237,7 +238,8 @@ public:
     else first = false;
 
     // Update the point cloud's header
-    point_cloud.header.stamp = current_frame_data_->header.stamp;
+    pcl::PCLHeader current_frame_data_header = pcl_conversions::toPCL(current_frame_data_->header);
+    point_cloud.header.stamp = current_frame_data_header.stamp;
 
     // Publish the cloud...
     pc_pub_->publish(point_cloud);

@@ -41,6 +41,7 @@
 
 #include <pcl_ros/point_cloud.h>
 #include <pcl/point_types.h>
+#include <pcl_conversions/pcl_conversions.h>
 
 #include <elas_ros/ElasFrameData.h>
 
@@ -141,9 +142,11 @@ public:
   typedef message_filters::Synchronizer<ApproximatePolicy> ApproximateSync;
   typedef pcl::PointCloud<pcl::PointXYZRGB> PointCloud;
 
-  void publish_point_cloud(const sensor_msgs::ImageConstPtr& l_image_msg, float* l_disp_data, const std::vector<int32_t>& inliers,
+  void publish_point_cloud(const sensor_msgs::ImageConstPtr& l_image_msg, 
+                           float* l_disp_data, const std::vector<int32_t>& inliers,
                            int32_t l_width, int32_t l_height,
-                           const sensor_msgs::CameraInfoConstPtr& l_info_msg, const sensor_msgs::CameraInfoConstPtr& r_info_msg)
+                           const sensor_msgs::CameraInfoConstPtr& l_info_msg, 
+                           const sensor_msgs::CameraInfoConstPtr& r_info_msg)
   {
     try
     {
@@ -151,9 +154,11 @@ public:
       cv_ptr = cv_bridge::toCvShare(l_image_msg, sensor_msgs::image_encodings::RGB8);
       image_geometry::StereoCameraModel model;
       model.fromCameraInfo(*l_info_msg, *r_info_msg);
+      pcl::PCLHeader l_info_header = pcl_conversions::toPCL(l_info_msg->header);
+
       PointCloud::Ptr point_cloud(new PointCloud());
-      point_cloud->header.frame_id = l_info_msg->header.frame_id;
-      point_cloud->header.stamp = l_info_msg->header.stamp;
+      point_cloud->header.frame_id = l_info_header.frame_id;
+      point_cloud->header.stamp = l_info_header.stamp;
       point_cloud->width = 1;
       point_cloud->height = inliers.size();
       point_cloud->points.resize(inliers.size());
@@ -225,8 +230,10 @@ public:
     }
   }
 
-  void process(const sensor_msgs::ImageConstPtr& l_image_msg, const sensor_msgs::ImageConstPtr& r_image_msg,
-               const sensor_msgs::CameraInfoConstPtr& l_info_msg, const sensor_msgs::CameraInfoConstPtr& r_info_msg)
+  void process(const sensor_msgs::ImageConstPtr& l_image_msg, 
+               const sensor_msgs::ImageConstPtr& r_image_msg,
+               const sensor_msgs::CameraInfoConstPtr& l_info_msg, 
+               const sensor_msgs::CameraInfoConstPtr& r_info_msg)
   {
     // Update the camera model
     model_.fromCameraInfo(l_info_msg, r_info_msg);
