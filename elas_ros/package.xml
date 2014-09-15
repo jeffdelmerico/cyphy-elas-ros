@@ -17,6 +17,7 @@
   <build_depend>libelas</build_depend> 
   <build_depend>roscpp</build_depend> 
   <build_depend>sensor_msgs</build_depend> 
+  <build_depend>stereo_msgs</build_depend> 
   <build_depend>nav_msgs</build_depend> 
   <build_depend>message_filters</build_depend> 
   <build_depend>image_transport</build_depend> 
@@ -31,6 +32,7 @@
   <run_depend>libelas</run_depend> 
   <run_depend>roscpp</run_depend> 
   <run_depend>sensor_msgs</run_depend> 
+  <run_depend>stereo_msgs</run_depend> 
   <run_depend>nav_msgs</run_depend> 
   <run_depend>message_filters</run_depend> 
   <run_depend>image_transport</run_depend> 

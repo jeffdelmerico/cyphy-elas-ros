@@ -73,12 +73,12 @@ public:
     ROS_INFO("Subscribing to:\n%s\n%s\n%s\n%s",left_topic.c_str(),right_topic.c_str(),left_info_topic.c_str(),right_info_topic.c_str());
 
     image_transport::ImageTransport local_it(local_nh);
-    disp_pub_.reset(new Publisher(local_it.advertise("disparity", 1)));
+    disp_pub_.reset(new Publisher(local_it.advertise("disparity_image", 1)));
     depth_pub_.reset(new Publisher(local_it.advertise("depth", 1)));
     pc_pub_.reset(new ros::Publisher(local_nh.advertise<PointCloud>("point_cloud", 1)));
     elas_fd_pub_.reset(new ros::Publisher(local_nh.advertise<elas_ros::ElasFrameData>("frame_data", 1)));
 
-    pub_disparity_ = local_nh.advertise<stereo_msgs::DisparityImage>("disparity_raw", 1);
+    pub_disparity_ = local_nh.advertise<stereo_msgs::DisparityImage>("disparity", 1);
 
     // Synchronize input topics. Optionally do approximate synchronization.
     bool approx;

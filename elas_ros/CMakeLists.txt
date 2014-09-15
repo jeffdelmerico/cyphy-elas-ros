@@ -5,6 +5,7 @@ find_package(catkin REQUIRED COMPONENTS
   libelas
   roscpp
   sensor_msgs
+  stereo_msgs
   nav_msgs
   message_filters
   image_transport
