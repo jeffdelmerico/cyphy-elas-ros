@@ -1,13 +1,15 @@
 <launch>
     <!-- Launches ELAS node, and rectification nodes for input --> 
+    <!-- Arguments: input stereo namespace and output elas namespace -->
     <arg name="stereo" default="stereo"/>
+    <arg name="elas_ns" default="elas"/>
     <group ns="$(arg stereo)/left">
-        <node name="left_rect" pkg="image_view" type="image_view"/>
+        <node name="left_rect" pkg="image_proc" type="image_proc"/>
     </group>
     <group ns="$(arg stereo)/right">
-        <node name="right_rect" pkg="image_view" type="image_view"/>
+        <node name="right_rect" pkg="image_proc" type="image_proc"/>
     </group>
-    <node name="elas" pkg="elas_ros" type="elas_ros">
+    <node name="$(arg elas_ns)" pkg="elas_ros" type="elas_ros">
         <remap from="stereo" to="$(arg stereo)"/>
         <remap from="image" to="image_rect"/>
     </node>
