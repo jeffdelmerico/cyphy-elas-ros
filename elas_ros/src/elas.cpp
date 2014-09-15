@@ -70,6 +70,8 @@ public:
     left_info_sub_.subscribe(nh, left_info_topic, 1);
     right_info_sub_.subscribe(nh, right_info_topic, 1);
 
+    ROS_INFO("Subscribing to:\n%s\n%s\n%s\n%s",left_topic.c_str(),right_topic.c_str(),left_info_topic.c_str(),right_info_topic.c_str());
+
     image_transport::ImageTransport local_it(local_nh);
     disp_pub_.reset(new Publisher(local_it.advertise("disparity", 1)));
     depth_pub_.reset(new Publisher(local_it.advertise("depth", 1)));
@@ -235,6 +237,7 @@ public:
                const sensor_msgs::CameraInfoConstPtr& l_info_msg, 
                const sensor_msgs::CameraInfoConstPtr& r_info_msg)
   {
+    ROS_DEBUG("Received images and camera info.");
     // Update the camera model
     model_.fromCameraInfo(l_info_msg, r_info_msg);
 
