@@ -73,7 +73,7 @@ public:
     ROS_INFO("Subscribing to:\n%s\n%s\n%s\n%s",left_topic.c_str(),right_topic.c_str(),left_info_topic.c_str(),right_info_topic.c_str());
 
     image_transport::ImageTransport local_it(local_nh);
-    disp_pub_.reset(new Publisher(local_it.advertise("disparity_image", 1)));
+    disp_pub_.reset(new Publisher(local_it.advertise("image_disparity", 1)));
     depth_pub_.reset(new Publisher(local_it.advertise("depth", 1)));
     pc_pub_.reset(new ros::Publisher(local_nh.advertise<PointCloud>("point_cloud", 1)));
     elas_fd_pub_.reset(new ros::Publisher(local_nh.advertise<elas_ros::ElasFrameData>("frame_data", 1)));
