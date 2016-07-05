@@ -1,4 +1,5 @@
-<package>
+<?xml version="1.0"?>
+<package format="2">
   <name>libelas</name>
   <version>0.0.1</version>
   <description>
@@ -12,6 +13,7 @@
   <url>http://ros.org/wiki/elas</url>
 
   <buildtool_depend>catkin</buildtool_depend>
+  <buildtool_depend>catkin_simple</buildtool_depend>
 
   <export>
     <cpp cflags="-msse3 -I${prefix}/libelas/src/" lflags="-L${prefix}/lib -Wl,-rpath,${prefix}/lib -lelas"/>
