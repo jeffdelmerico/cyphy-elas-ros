@@ -45,7 +45,7 @@
 
 #include <elas_ros/ElasFrameData.h>
 
-#include <elas.h>
+#include <libelas/elas.h>
 
 //#define DOWN_SAMPLE
 

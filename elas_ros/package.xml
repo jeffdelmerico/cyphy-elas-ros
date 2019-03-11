@@ -14,7 +14,6 @@
   <url type="website">http://ros.org/wiki/cyphy_elas_ros</url>
 
   <buildtool_depend>catkin</buildtool_depend>
-  <buildtool_depend>catkin_simple</buildtool_depend>
 
   <depend>libelas</depend> 
   <depend>roscpp</depend> 
