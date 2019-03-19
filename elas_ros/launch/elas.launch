@@ -1,0 +1,24 @@
+<launch>
+    <!-- Launches ELAS node, and rectification nodes for input --> 
+    <!-- Arguments: input stereo namespace and output elas namespace -->
+    <arg name="stereo" default="stereo"/>
+    <arg name="elas_ns" default="elas"/>
+    
+    <!-- If you already have rectified camera images remove the image_proc nodes -->
+    <group ns="$(arg stereo)/left">
+        <node name="left_rect" pkg="image_proc" type="image_proc"/>
+    </group>
+    
+    <group ns="$(arg stereo)/right">
+        <node name="right_rect" pkg="image_proc" type="image_proc"/>
+    </group>
+
+    <!-- This node actually does the stereo reconstruction -->
+    <node name="$(arg elas_ns)" pkg="elas_ros" type="elas_ros" output="screen">
+        <remap from="stereo" to="$(arg stereo)"/>
+        <remap from="image" to="image_rect"/>
+
+        <!-- If your cameras are not synchronised then uncomment the following line -->
+        <!-- <param name="approximate_sync" value="true" type="bool"/> -->
+    </node>
+</launch>
