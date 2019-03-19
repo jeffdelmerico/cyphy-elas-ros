@@ -7,10 +7,17 @@ add_definitions(-msse3)
 
 find_package(catkin REQUIRED)
 
-add_library(elas src/descriptor.cpp src/elas.cpp src/filter.cpp src/matrix.cpp src/triangle.cpp)
-include_directories(include include/libelas ${catkin_INCLUDE_DIRS})
-
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES elas
+)
+
+add_library(elas src/descriptor.cpp src/elas.cpp src/filter.cpp src/matrix.cpp src/triangle.cpp)
+include_directories(include include/libelas ${catkin_INCLUDE_DIRS})
+
+install(
+  TARGETS elas
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
