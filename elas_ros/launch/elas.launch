@@ -18,6 +18,30 @@
         <remap from="stereo" to="$(arg stereo)"/>
         <remap from="image" to="image_rect"/>
 
+        <param name="disp_min" type="int" value="0"/>
+        <param name="disp_max" type="int" value="255"/>
+        <param name="support_threshold" type="double" value="0.95"/>
+        <param name="support_texture" type="int" value="10"/>
+        <param name="candidate_stepsize" type="int" value="5"/>
+        <param name="incon_window_size" type="int" value="5"/>
+        <param name="incon_threshold" type="int" value="5"/>
+        <param name="incon_min_support" type="int" value="5"/>
+        <param name="add_corners" type="bool" value="0"/>
+        <param name="grid_size" type="int" value="20"/>
+        <param name="beta" type="double" value="0.02"/>
+        <param name="gamma" type="double" value="3"/>
+        <param name="sigma" type="double" value="1"/>
+        <param name="sradius" type="double" value="2"/>
+        <param name="match_texture" type="int" value="1"/>
+        <param name="lr_threshold" type="int" value="2"/>
+        <param name="speckle_sim_threshold" type="double" value="1"/>
+        <param name="speckle_size" type="int" value="200"/>
+        <param name="ipol_gap_width" type="int" value="300"/>
+        <param name="filter_median" type="bool" value="0"/>
+        <param name="filter_adaptive_mean" type="bool" value="1"/>
+        <param name="postprocess_only_left" type="bool" value="1"/>
+        <param name="subsampling" type="bool" value="0"/>
+
         <!-- If your cameras are not synchronised then uncomment the following line -->
         <!-- <param name="approximate_sync" value="true" type="bool"/> -->
     </node>
